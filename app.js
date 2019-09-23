@@ -1,10 +1,22 @@
+const express = require('express');
+const logger = require('./utils/logger.js');
 const { port, dburl } = require('./config');
+const morgan = require('morgan');
+const app = express();
+
+app.use(morgan('dev'));
+app.use('/', function(req, res){
+	res.send('Our first');
+});
+
+
+
+
+
+
 
 (async () => {
 	const { logRequest } = await require('./db')(dburl);
-	const Koa = require('koa');
-	const app = new Koa();
-
 	app.name = makeAppName({port});
 
 	app.use(async (ctx, next) => {
@@ -35,7 +47,7 @@ const { port, dburl } = require('./config');
 		ctx.status = generateChaoticalResponseCode(ctx);
 	});
 
-	app.listen(port);
+	app.listen(port,()=> logger.info('server running'));
 	console.log(`Server '${app.name}' is listening on port ${port}`);
 })();
 
